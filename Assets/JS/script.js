@@ -7,30 +7,34 @@ function successLocation(loc) {
     setMap([loc.coords.longitude, loc.coords.latitude])
 }
 
-function errorLocation(err) { console.log('Error: could not get current location') }
+function errorLocation() { setMap([74, 41]) }
 
 function setMap(center) {
 
     // Initialize map zoomed out
-    var map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/joeldore/ckhimdsax13ws19n1r68qbsxj', // stylesheet location
         center: center, // starting position [lng, lat]
         zoom: 4 // starting zoom
     });
-
-    // Add nav control
-    var nav = new mapboxgl.NavigationControl();
-    map.addControl(nav, 'bottom-right');
-    // Add geolocate control
-    var geolocate = new mapboxgl.GeolocateControl({
+    const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+    })
+    const nav = new mapboxgl.NavigationControl();
+    const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: {
             enableHighAccuracy: true
         },
         trackUserLocation: true
     });
-    map.addControl(geolocate);
+
+
     map.on('load', function () {
         geolocate.trigger();
     });
+    map.addControl(nav, 'bottom-right');
+    map.addControl(geolocate);
+    map.addControl(directions, 'top-left');
+    directions.setOrigin(center)
 }
